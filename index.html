@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WavePlayer</title>
+
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffffff;
+        }
+
+        .mediaCont {
+            width: 30%;
+            min-width: 340px;
+            height: 14%;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            background-color: #CFE6D0;
+            
+        }
+
+        .play-btn {
+            width: 2.5vw;
+            min-width: 60px;
+            height: 2.5vw;
+            min-height: 60px;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100%;
+            cursor: pointer;
+            transition: all 0.1s;
+            margin: 0;
+        }
+
+        .play-btn.play {
+            background-image: url(play-buttton.png);
+        }
+
+        .play-btn.pause {
+            background-image: url(pause.png);
+        }
+
+
+        .play-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .waveForm {
+            width: 80%;
+            height: auto;
+            min-height: 20px;
+        }
+
+        .play-btn,
+        .waveForm {
+            margin: 0.5vw;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .mediaCont {
+                width: 80%;
+                height: 20%;
+            }
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="mediaCont">
+        <div class="play-btn play" id="play-btn"></div>
+        <div class="waveForm" id="waveForm"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/wavesurfer.js"></script>
+    <script>
+     
+        var playBtn = document.getElementById('play-btn');
+        var waveform = document.getElementById('waveForm');
+
+        var wavesurfer = WaveSurfer.create({
+            container: '#waveForm',
+            waveColor: '#000000',
+            progressColor: '#FFFFFF',
+            barWidth: 0,
+            cursorWidth: 2,
+            backend: 'MediaElement',
+            dragToSeek: true,
+        });
+
+        playBtn.addEventListener('click', function () {
+            wavesurfer.playPause();
+            playBtn.classList.toggle('play');
+            playBtn.classList.toggle('pause');
+        });
+
+
+        wavesurfer.on('ready', function () {
+            playBtn.classList.add('active');
+        });
+
+        // Load audio
+        wavesurfer.on('audioprocess', function () {
+            wavesurfer.drawer.progress(wavesurfer.backend.getPlayedPercents());
+        });
+
+        // Add scrubbing functionality
+        waveform.addEventListener('click', function (e) {
+            var scrubbing = e.offsetX / this.offsetWidth;
+            wavesurfer.seekTo(scrubbing * wavesurfer.getDuration());
+        });
+
+   
+         wavesurfer.load('Vocalsss_Dreamer_Loop_Control_120_Aminor.wav');
+    </script>
+</body>
+</html>
